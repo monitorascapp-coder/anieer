@@ -1,61 +1,69 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // --- Floating Hearts Background ---
     const container = document.getElementById('hearts-container');
-    const hearts = ['❤️', '💖', '💕', '💗', '💓'];
+    const heartTypes = ['❤️', '💖', '💕', '💗', '💓', '🌸', '✨'];
     
     function createHeart() {
         const heart = document.createElement('div');
         heart.classList.add('floating-heart');
+        heart.innerText = heartTypes[Math.floor(Math.random() * heartTypes.length)];
         
-        // Randomize heart type
-        heart.innerText = hearts[Math.floor(Math.random() * hearts.length)];
-        
-        // Randomize position
         heart.style.left = Math.random() * 100 + 'vw';
-        
-        // Randomize size
-        const size = (Math.random() * 20 + 10) + 'px';
+        const size = (Math.random() * 15 + 10) + 'px';
         heart.style.fontSize = size;
         
-        // Randomize duration
-        const duration = (Math.random() * 5 + 5) + 's';
+        const duration = (Math.random() * 8 + 7) + 's';
         heart.style.animationDuration = duration;
-        
-        // Randomize opacity
-        heart.style.opacity = Math.random() * 0.5 + 0.3;
+        heart.style.opacity = Math.random() * 0.4 + 0.2;
         
         container.appendChild(heart);
-        
-        // Remove heart after animation finishes
-        setTimeout(() => {
-            heart.remove();
-        }, parseFloat(duration) * 1000);
+        setTimeout(() => heart.remove(), parseFloat(duration) * 1000);
     }
     
-    // Create hearts periodically
-    setInterval(createHeart, 300);
-    
-    // Create some initial hearts
-    for(let i = 0; i < 15; i++) {
-        setTimeout(createHeart, Math.random() * 3000);
+    setInterval(createHeart, 400);
+    for(let i = 0; i < 10; i++) setTimeout(createHeart, Math.random() * 5000);
+
+    // --- Love Counter Logic ---
+    // Target date: February 22nd. 
+    // If it hasn't happened this year yet, it will show time since last year's Feb 22.
+    // Or if it's meant to be a fixed start date (e.g., Feb 22, 2024), we set it here.
+    const startDate = new Date('February 22, 2026 14:00:00'); 
+
+    function updateCounter() {
+        const now = new Date();
+        const diff = now - startDate;
+
+        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+        document.getElementById('days').innerText = d.toString().padStart(2, '0');
+        document.getElementById('hours').innerText = h.toString().padStart(2, '0');
+        document.getElementById('minutes').innerText = m.toString().padStart(2, '0');
+        document.getElementById('seconds').innerText = s.toString().padStart(2, '0');
     }
 
-    // Surprise Card Logic
+    setInterval(updateCounter, 1000);
+    updateCounter();
+
+    // --- Surprise Card Logic ---
     const surpriseBtn = document.getElementById('surprise-btn');
     const overlay = document.getElementById('card-overlay');
     const closeBtn = document.getElementById('close-card');
 
     surpriseBtn.addEventListener('click', () => {
         overlay.classList.remove('hidden');
+        // Add extra hearts when clicking the button
+        for(let i = 0; i < 15; i++) setTimeout(createHeart, i * 100);
     });
 
     closeBtn.addEventListener('click', () => {
         overlay.classList.add('hidden');
     });
 
-    // Close on click outside the card
     overlay.addEventListener('click', (e) => {
-        if (e.target === overlay) {
-            overlay.classList.add('hidden');
-        }
+        if (e.target === overlay) overlay.classList.add('hidden');
     });
 });
+
